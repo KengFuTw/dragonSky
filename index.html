@@ -95,7 +95,7 @@
                 CriticalRate: function(val) {
                     var item = ana(val, 90, 75, 60, 45);
                     if (val != '') {
-                        this.acd = parseFloat(item[0]) + parseFloat(item[1] * 0.2) + parseFloat(item[2] * 0.25) + parseFloat(item[3] * 0.5) + parseFloat(item[4] * 0.75);
+                        this.acr = parseFloat(item[0]) + parseFloat(item[1] * 0.2) + parseFloat(item[2] * 0.25) + parseFloat(item[3] * 0.5) + parseFloat(item[4] * 0.75);
                     } else {
                         this.acr = 0
                     }
