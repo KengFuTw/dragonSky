@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>test</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body style="background-color:antiquewhite;">
+    <h1>DragonSky飛龍不累 武器效益計算</h1>
+    <div id="computed_props">
+        爆擊率 : <input type="text" v-model.number="kilometers"> 實際值：{{ meters }}
+    </div>
+    <p id="info"></p>
+    <script type="text/javascript">
+        var vm = new Vue({
+            el: '#computed_props',
+            data: {
+                kilometers: 0,
+                meters: 0
+            },
+            methods: {},
+            computed: {},
+            watch: {
+                kilometers: function(val) {
+                    var temp = val;
+                    var result02 = 0;
+                    var result025 = 0;
+                    var result05 = 0;
+                    var result075 = 0;
+                    if (temp > 90) {
+                        result02 = temp - 90;
+                        temp = 90;
+                    }
+                    if (temp > 75) {
+                        result025 = temp - 75;
+                        temp = 75;
+                    }
+                    if (temp > 60) {
+                        result05 = temp - 60;
+                        temp = 60;
+                    }
+                    if (temp > 45) {
+                        result075 = temp - 45;
+                        temp = 45;
+                    }
+                    if (val != '') {
+                        this.meters = parseFloat(temp) + parseFloat(result02 * 0.2) + parseFloat(result025 * 0.25) + parseFloat(result05 * 0.5) + parseFloat(result075 * 0.75);
+                    } else {
+                        this.meters = 0
+                    }
+                },
+            }
+        });
+    </script>
+</body>
+
+</html>
