@@ -10,50 +10,126 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <style>
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .row {
+            margin: 10px;
+        }
+    </style>
 </head>
 
 <body style="background-color:antiquewhite;">
     <h1>DragonSky飛龍不累 武器效益計算</h1>
     <div id="computed_props">
-        爆擊率 : <input type="text" v-model.number="kilometers"> 實際值：{{ meters }}
+        <div class="container">
+            <div class="row">
+                <div class="col-3">
+                    爆擊率(Critical Rate) :</div>
+                <div class="col-9"> <input type="text" v-model.number="CriticalRate">% 實際值：{{ acr }}%</div>
+            </div>
+            <div class="row">
+                <div class="col-3">爆擊傷害(Critical Damage) : </div>
+                <div class="col-9"><input type="text" v-model.number="CriticalDamage"> 實際值：{{ acd }}</div>
+            </div>
+            <div class="row">
+                <div class="col-3">無視防禦(Defense Penetration) : </div>
+                <div class="col-9"><input type="text" v-model.number="DefensePenetration"> 實際值：{{ adp }}%</div>
+            </div>
+            <div class="row">
+                <div class="col-3">屬性傷害(Attribute Damage) :</div>
+                <div class="col-9"> <input type="text" v-model.number="AttributeDamage"> 實際值：{{ aad }}%</div>
+            </div>
+            <div class="row">
+                <div class="col-3">無視傷害(Damage Reduction) : </div>
+                <div class="col-9"><input type="text" v-model.number="DamageReduction"> 實際值：{{ adr }}%</div>
+            </div>
+        </div>
     </div>
-    <p id="info"></p>
     <script type="text/javascript">
+        function ana(data, val1, val2, val3, val4) {
+            var result02 = 0;
+            var result025 = 0;
+            var result05 = 0;
+            var result075 = 0;
+            if (data > val1) {
+                result02 = data - val1;
+                data = val1;
+            }
+            if (data > val2) {
+                result025 = data - val2;
+                data = val2;
+            }
+            if (data > val3) {
+                result05 = data - val3;
+                data = val3;
+            }
+            if (data > val4) {
+                result075 = data - val4;
+                data = val4;
+            }
+            var items = [data, result02, result025, result05, result075]
+            return items
+        };
         var vm = new Vue({
             el: '#computed_props',
             data: {
-                kilometers: 0,
-                meters: 0
+                CriticalRate: '',
+                CriticalDamage: '',
+                DefensePenetration: '',
+                AttributeDamage: '',
+                DamageReduction: '',
+                acr: '',
+                acd: '',
+                adp: '',
+                aad: '',
+                adr: '',
             },
             methods: {},
             computed: {},
             watch: {
-                kilometers: function(val) {
-                    var temp = val;
-                    var result02 = 0;
-                    var result025 = 0;
-                    var result05 = 0;
-                    var result075 = 0;
-                    if (temp > 90) {
-                        result02 = temp - 90;
-                        temp = 90;
-                    }
-                    if (temp > 75) {
-                        result025 = temp - 75;
-                        temp = 75;
-                    }
-                    if (temp > 60) {
-                        result05 = temp - 60;
-                        temp = 60;
-                    }
-                    if (temp > 45) {
-                        result075 = temp - 45;
-                        temp = 45;
-                    }
+
+                CriticalRate: function(val) {
+                    var item = ana(val, 90, 75, 60, 45);
                     if (val != '') {
-                        this.meters = parseFloat(temp) + parseFloat(result02 * 0.2) + parseFloat(result025 * 0.25) + parseFloat(result05 * 0.5) + parseFloat(result075 * 0.75);
+                        this.acd = parseFloat(item[0]) + parseFloat(item[1] * 0.2) + parseFloat(item[2] * 0.25) + parseFloat(item[3] * 0.5) + parseFloat(item[4] * 0.75);
                     } else {
-                        this.meters = 0
+                        this.acr = 0
+                    }
+                },
+                CriticalDamage: function(val) {
+                    var item = ana(val, 380, 330, 280, 230);
+                    if (val != '') {
+                        this.acd = parseFloat(item[0]) + parseFloat(item[1] * 0.2) + parseFloat(item[2] * 0.25) + parseFloat(item[3] * 0.5) + parseFloat(item[4] * 0.75);
+                    } else {
+                        this.acd = 0
+                    }
+                },
+                DefensePenetration: function(val) {
+                    var item = ana(val, 80, 65, 50, 35);
+                    if (val != '') {
+                        this.adp = parseFloat(item[0]) + parseFloat(item[1] * 0.2) + parseFloat(item[2] * 0.25) + parseFloat(item[3] * 0.5) + parseFloat(item[4] * 0.75);
+                    } else {
+                        this.adp = 0
+                    }
+                },
+                AttributeDamage: function(val) {
+                    var item = ana(val, 80, 65, 50, 35);
+                    if (val != '') {
+                        this.aad = parseFloat(item[0]) + parseFloat(item[1] * 0.2) + parseFloat(item[2] * 0.25) + parseFloat(item[3] * 0.5) + parseFloat(item[4] * 0.75);
+                    } else {
+                        this.aad = 0
+                    }
+                },
+                DamageReduction: function(val) {
+                    var item = ana(val, 60, 50, 40, 30);
+                    if (val != '') {
+                        this.adr = parseFloat(item[0]) + parseFloat(item[1] * 0.2) + parseFloat(item[2] * 0.25) + parseFloat(item[3] * 0.5) + parseFloat(item[4] * 0.75);
+                    } else {
+                        this.adr = 0
                     }
                 },
             }
