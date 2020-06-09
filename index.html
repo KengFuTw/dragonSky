@@ -19,33 +19,56 @@
         .row {
             margin: 10px;
         }
+
+        input {
+            width: 80%;
+        }
     </style>
 </head>
 
 <body style="background-color:antiquewhite;">
-    <h1>DragonSky飛龍不累 武器效益計算</h1>
+    <h1>武器效益計算</h1>
     <div id="computed_props">
-        <div class="container">
+        <div class="container-fluid">
             <div class="row">
-                <div class="col-3">
-                    爆擊率(Critical Rate) :</div>
-                <div class="col-9"> <input type="text" v-model.number="CriticalRate">% 實際值：{{ acr }}%</div>
+                <div class="col-xs-6 col-md-3 col-6" alt='爆擊率(Critical Rate)'>
+                    爆擊率 :</div>
+                <div class="col-xs-6 col-md-3 col-6"><input type="text" v-model.number="CriticalRate"> %</div>
+                <div class="col-xs-6 col-md-3 col-6">爆擊率實際值：</div>
+                <div class="col-xs-6 col-md-3 col-6"><input type="text" v-model='acr'>%</div>
+
             </div>
             <div class="row">
-                <div class="col-3">爆擊傷害(Critical Damage) : </div>
-                <div class="col-9"><input type="text" v-model.number="CriticalDamage"> 實際值：{{ acd }}</div>
+                <div class="col-xs-6 col-md-3 col-6" alt='爆擊傷害(Critical Damage)'>爆擊傷害 : </div>
+                <div class="col-xs-6 col-md-3 col-6"> <input type="text" v-model.number="CriticalDamage"> %</div>
+                <div class="col-xs-6 col-md-3 col-6">爆擊傷害實際值：</div>
+                <div class="col-xs-6 col-md-3 col-6"><input type="text" v-model='acd'>%</div>
+
             </div>
             <div class="row">
-                <div class="col-3">無視防禦(Defense Penetration) : </div>
-                <div class="col-9"><input type="text" v-model.number="DefensePenetration"> 實際值：{{ adp }}%</div>
+                <div class="col-xs-6 col-md-3 col-6" alt='無視防禦(Defense Penetration)'>無視防禦 : </div>
+                <div class="col-xs-6 col-md-3 col-6"> <input type="text" v-model.number="DefensePenetration">%
+
+                </div>
+                <div class="col-xs-6 col-md-3 col-6">無視防禦實際值：</div>
+                <div class="col-xs-6 col-md-3 col-6"><input type="text" v-model='adp'>%</div>
             </div>
             <div class="row">
-                <div class="col-3">屬性傷害(Attribute Damage) :</div>
-                <div class="col-9"> <input type="text" v-model.number="AttributeDamage"> 實際值：{{ aad }}%</div>
+                <div class="col-xs-6 col-md-3 col-6" alt='屬性傷害(Attribute Damage)'>屬性傷害 :</div>
+                <div class="col-xs-6 col-md-3 col-6"> <input type="text" v-model.number="AttributeDamage">%
+
+                </div>
+                <div class="col-xs-6 col-md-3 col-6">屬性傷害實際值：</div>
+                <div class="col-xs-6 col-md-3 col-6"><input type="text" v-model='aad'>%</div>
+
             </div>
             <div class="row">
-                <div class="col-3">無視傷害(Damage Reduction) : </div>
-                <div class="col-9"><input type="text" v-model.number="DamageReduction"> 實際值：{{ adr }}%</div>
+                <div class="col-xs-6 col-md-3 col-6" alt='無視傷害(Damage Reduction)'>無視傷害: </div>
+                <div class="col-xs-6 col-md-3 col-6"> <input type="text" v-model.number="DamageReduction">%
+
+                </div>
+                <div class="col-xs-6 col-md-3 col-6">無視傷害實際值：</div>
+                <div class="col-xs-6 col-md-3 col-6"><input type="text" v-model='adr'>%</div>
             </div>
         </div>
     </div>
@@ -74,6 +97,24 @@
             var items = [data, result02, result025, result05, result075]
             return items
         };
+
+        function ati(data, val1, val2, val3, val4) {
+            var av1 = val4;
+            var av75 = (val3 - val4) * 0.75;
+            var av50 = (val2 - val3) * 0.5;
+            var av25 = (val1 - val2) * 0.25;
+            var lv4 = av1 + av75 + av50 + av25;
+            var lv3 = av1 + av75 + av50;
+            var lv2 = av1 + av75;
+            var lv1 = av1;
+            var initial_val = 0
+            initial_val = data > lv4 ? (data - lv4) / 0.2 + val1 : initial_val
+            initial_val = (lv4 >= data) && (data > lv3) ? (data - lv3) / 0.25 + val2 : initial_val
+            initial_val = (lv3 >= data) && (data > lv2) ? (data - lv2) / 0.5 + val3 : initial_val
+            initial_val = (lv2 >= data) && (data > lv1) ? (data - lv1) / 0.75 + val4 : initial_val
+            initial_val = data < lv1 ? data : initial_val
+            return initial_val
+        };
         var vm = new Vue({
             el: '#computed_props',
             data: {
@@ -94,12 +135,18 @@
 
                 CriticalRate: function(val) {
                     var item = ana(val, 90, 75, 60, 45);
+                    this.CriticalRate = val
                     if (val != '') {
                         this.acr = parseFloat(item[0]) + parseFloat(item[1] * 0.2) + parseFloat(item[2] * 0.25) + parseFloat(item[3] * 0.5) + parseFloat(item[4] * 0.75);
                     } else {
                         this.acr = 0
                     }
                 },
+                acr: function(val) {
+                    this.acr = val
+                    this.CriticalRate = ati(val, 90, 75, 60, 45);
+                },
+
                 CriticalDamage: function(val) {
                     var item = ana(val, 380, 330, 280, 230);
                     if (val != '') {
@@ -107,6 +154,10 @@
                     } else {
                         this.acd = 0
                     }
+                },
+                acd: function(val) {
+                    this.acd = val
+                    this.CriticalDamage = ati(val, 380, 330, 280, 230);
                 },
                 DefensePenetration: function(val) {
                     var item = ana(val, 80, 65, 50, 35);
@@ -116,6 +167,10 @@
                         this.adp = 0
                     }
                 },
+                adp: function(val) {
+                    this.adp = val
+                    this.DefensePenetration = ati(val, 80, 65, 50, 35);
+                },
                 AttributeDamage: function(val) {
                     var item = ana(val, 80, 65, 50, 35);
                     if (val != '') {
@@ -124,6 +179,10 @@
                         this.aad = 0
                     }
                 },
+                aad: function(val) {
+                    this.aad = val
+                    this.AttributeDamage = ati(val, 80, 65, 50, 35);
+                },
                 DamageReduction: function(val) {
                     var item = ana(val, 60, 50, 40, 30);
                     if (val != '') {
@@ -131,6 +190,10 @@
                     } else {
                         this.adr = 0
                     }
+                },
+                adr: function(val) {
+                    this.adr = val
+                    this.DamageReduction = ati(val, 60, 50, 40, 30);
                 },
             }
         });
